@@ -154,4 +154,23 @@ First implementation.
             textString="k=%k"),
           Line(points={{-100,0},{100,0}},     color={0,0,0})}));
   end ThermalProperties;
+
+  record HygroThermalMaterial "Hygrothermal properties of materials "
+    extends Material;
+
+  parameter Real xw_80
+      "Water content in kg(water)/kg(dry air) at 80% of relative humidity"
+      annotation (Dialog(tab="HAM"));
+
+  parameter Real xw_f
+      "Water content in kg(water)/kg(dry air) at 100% of relative humidity"
+       annotation (Dialog(tab="HAM"));
+
+   parameter Real b "approximation factor"
+        annotation (Dialog(tab="HAM"));
+
+   parameter Real Mu "Water vapour diffusion resistance factor"
+         annotation (Dialog(tab="HAM"));
+
+  end HygroThermalMaterial;
 end BaseClasses;

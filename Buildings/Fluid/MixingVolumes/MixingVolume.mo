@@ -16,11 +16,11 @@ equation
       color={0,0,127},
       smooth=Smooth.None));
   connect(QSen_flow.y, steBal.Q_flow) annotation (Line(
-      points={{-59,88},{-30,88},{-30,18},{-22,18}},
+      points={{-39,88},{-30,88},{-30,18},{-22,18}},
       color={0,0,127},
       smooth=Smooth.None));
   connect(QSen_flow.y, dynBal.Q_flow) annotation (Line(
-      points={{-59,88},{28,88},{28,16},{38,16}},
+      points={{-39,88},{28,88},{28,16},{38,16}},
       color={0,0,127},
       smooth=Smooth.None));
   annotation (

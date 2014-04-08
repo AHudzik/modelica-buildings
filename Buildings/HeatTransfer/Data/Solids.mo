@@ -48,6 +48,39 @@ First implementation.
       k=0.12,
       d=540,
       c=1210) "Plywood (k=0.12)";
+  record GenericHAM
+    extends BaseClasses.HygroThermalMaterial(final R=x/k,      final TSol=293.15,
+                                                               final TLiq=293.15,
+                                                               final LHea=0,
+                                                               final phasechange=false);
+    annotation (defaultComponentName="mat", Documentation(info=
+     "<html>
+<p>
+Generic record for solid materials.
+The material is characterized by its 
+thermal conductivity, mass density and specific
+heat capacity.
+</p>
+</html>", revisions=
+          "<html>
+<ul>
+<li>
+September 9, 2010, by Michael Wetter:<br/>
+First implementation.
+</li>
+</ul>
+</html>"));
+
+  end GenericHAM;
+
+  record ConcreteHAM = Buildings.HeatTransfer.Data.Solids.GenericHAM (
+      k=1.6,
+      d=2300,
+      c=850,
+      b=1.4857,
+      xw_80=85,
+      xw_f=150,
+      Mu=180);
   annotation (
 Documentation(
 info="<html>

@@ -131,7 +131,7 @@ equation
             -100},{100,100}})), Icon(coordinateSystem(
           preserveAspectRatio=false,extent={{-100,-100},{100,100}}), graphics={
         Rectangle(
-          extent={{-94,4},{92,-4}},
+          extent={{-92,4},{94,-4}},
           lineColor={0,0,0},
           fillColor={191,0,0},
           fillPattern=FillPattern.Solid),
@@ -161,7 +161,7 @@ equation
           lineColor={0,0,255},
           textString="%x"),
         Rectangle(
-          extent={{44,54},{62,-60}},
+          extent={{42,54},{60,-60}},
           lineColor={0,0,0},
           fillColor={192,192,192},
           fillPattern=FillPattern.Backward),
