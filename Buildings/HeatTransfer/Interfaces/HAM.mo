@@ -219,6 +219,14 @@ package HAM
 
     model HAMConductor3
 
+    function delta_L
+      input SIunits.Temp_K T;
+      constant SIunits.Pressure p_L = 101300;
+      output WaterVapourPermeability value;
+    algorithm
+      value := 2.0e-7 * T^0.81 / p_L;
+    end delta_L;
+
     Modelica.SIunits.MassFlowRate m_flow[nSta+1];
     Modelica.SIunits.HeatFlowRate Q_flow[nSta+1];
     Modelica.SIunits.Temperature T[nSta](start=
@@ -310,7 +318,7 @@ package HAM
 
       for i in 2:nSta loop
         phi[i]=pw[i]/psat[i];
-        D[i]= (2*10^(-7)*T[i]^0.81)/patm; // fixme, you should to have this as a function
+        D[i]= delta_L( T[i]); // fixme, you should to have this as a function
         psat[i]= Modelica.Math.exp(-5800/T[i]+1.391-0.04864*T[i]+4.176*10^(-5)*T[i]^2-1.445*10^(-8)*T[i]^3+6.545*Modelica.Math.log(T[i]));
         T[i-1]-T[i] = Q_flow[i]/UAnSta;
         pw[i-1]-pw[i] = m_flow[i]/((nSta*D[i]*A)/(material.x*material.Mu));
