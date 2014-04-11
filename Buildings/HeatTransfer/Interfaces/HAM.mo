@@ -235,6 +235,8 @@ package HAM
     Modelica.SIunits.Pressure psat[nSta]
         "equilibrum vapor pressure at the states";
     Modelica.SIunits.MassFraction Xi_outflow[nSta] "mass fraction at the state";
+    Real w[nSta] "water content at the states";
+    Real C_nodes[nSta] "water content at the states";
 
       replaceable parameter Data.BaseClasses.HygroThermalMaterial material
         "Material from Data.Solids, Data.SolidsPCM or Data.Resistances"
@@ -281,7 +283,7 @@ package HAM
     equation
 
       dT = heatMassPort_a.heatPort.T - heatMassPort_b.heatPort.T;
-
+      // fixme psat should be a function
       psat[1]= Modelica.Math.exp(-5800/heatMassPort_a.heatPort.T+1.391-0.04864*heatMassPort_a.heatPort.T+4.176*10^(-5)*heatMassPort_a.heatPort.T^2-1.445*10^(-8)*heatMassPort_a.heatPort.T^3+6.545*Modelica.Math.log(heatMassPort_a.heatPort.T));
       D[1]=(2*10^(-7)*heatMassPort_a.heatPort.T^0.81)/patm;
 
@@ -302,19 +304,21 @@ package HAM
       for i in 1:nSta loop
         dw_dphi[i]= material.xw_f*(b-1)*(b+1-2*phi[i])/((b-phi[i])*(b-phi[i]));
         Xi_outflow[i] =Buildings.Utilities.Psychrometrics.Functions.X_pW(pw[i]);
+        w[i]=material.xw_f*((b-1)*phi[i])/(b-phi[i]);
+        C_nodes[i] = C + w[i]*4187 *A*l;
       end for;
 
       for i in 2:nSta loop
         phi[i]=pw[i]/psat[i];
-        D[i]= (2*10^(-7)*T[i]^0.81)/patm;
+        D[i]= (2*10^(-7)*T[i]^0.81)/patm; // fixme, you should to have this as a function
         psat[i]= Modelica.Math.exp(-5800/T[i]+1.391-0.04864*T[i]+4.176*10^(-5)*T[i]^2-1.445*10^(-8)*T[i]^3+6.545*Modelica.Math.log(T[i]));
         T[i-1]-T[i] = Q_flow[i]/UAnSta;
         pw[i-1]-pw[i] = m_flow[i]/((nSta*D[i]*A)/(material.x*material.Mu));
       end for;
 
       for i in 1:nSta loop
-          der(T[i]) = (Q_flow[i]-Q_flow[i+1])/C;
-          der(phi[i]) = ((m_flow[i]-m_flow[i+1])/dw_dphi[i])/(A*l);
+          der(T[i]) = (Q_flow[i]-Q_flow[i+1])/C_nodes[i];
+          der(w[i]) = (m_flow[i]-m_flow[i+1])/(A*l);
       end for;
 
       annotation (Diagram(coordinateSystem(preserveAspectRatio=false, extent={{-100,
