@@ -229,7 +229,7 @@ package HAM
     Real D[nSta]
         "water vapour diffusion coefficient in air (Unit = Kg.m^-2.s^-1)";
     Modelica.SIunits.Pressure pw[nSta] "Vapour Pressure at the state";
-    Real phi[nSta](each start=0.5) "relative humidity";
+    Real phi[nSta] "relative humidity";
     Real dw_dphi[nSta];
 
     Modelica.SIunits.Pressure psat[nSta]
@@ -251,7 +251,7 @@ package HAM
         "Thermal conductance of construction (without surface heat transfer coefficients)";
 
       Modelica.SIunits.TemperatureDifference dT "port_a.T - port_b.T";
-
+      final parameter Real l = material.x/nSta;
       final parameter Integer nSta(min=1) = material.nSta
         "Number of state variables";
       final parameter Modelica.SIunits.ThermalConductance UAnSta = UA*nSta
@@ -283,9 +283,9 @@ package HAM
       dT = heatMassPort_a.heatPort.T - heatMassPort_b.heatPort.T;
 
       psat[1]= Modelica.Math.exp(-5800/heatMassPort_a.heatPort.T+1.391-0.04864*heatMassPort_a.heatPort.T+4.176*10^(-5)*heatMassPort_a.heatPort.T^2-1.445*10^(-8)*heatMassPort_a.heatPort.T^3+6.545*Modelica.Math.log(heatMassPort_a.heatPort.T));
-      //phi[1]= (heatMassPort_a.massPort.Xi_outflow*patm)/(heatMassPort_a.massPort.Xi_outflow*psat[1]+0.62198*psat[1]);
+      D[1]=(2*10^(-7)*heatMassPort_a.heatPort.T^0.81)/patm;
 
-      //Xi_outflow[1]= heatMassPort_a.massPort.Xi_outflow;
+      phi[1]= (heatMassPort_a.massPort.Xi_outflow*patm)/(heatMassPort_a.massPort.Xi_outflow*psat[1]+0.62198*psat[1]);
 
       heatMassPort_a.massPort.m_flow = +m_flow[1];
       Buildings.Utilities.Psychrometrics.Functions.pW_X(heatMassPort_a.massPort.Xi_outflow) - pw[1]= m_flow[1]/(nSta*D[1]*A/(material.x*material.Mu));
@@ -300,25 +300,21 @@ package HAM
       T[nSta] - heatMassPort_b.heatPort.T = Q_flow[nSta+1]/UAnSta2;
 
       for i in 1:nSta loop
-      pw[i]=psat[i]*phi[i];
-        D[i]= (2*10^(-7)*T[i]^0.81)/patm;
         dw_dphi[i]= material.xw_f*(b-1)*(b+1-2*phi[i])/((b-phi[i])*(b-phi[i]));
-
-     // phi[i]= (Xi_outflow[i]*patm)/(0.62198*psat[i]+Xi_outflow[i]*psat[i]);
-      Xi_outflow[i] =Buildings.Utilities.Psychrometrics.Functions.X_pW(pw[i]);
-    end for;
+        Xi_outflow[i] =Buildings.Utilities.Psychrometrics.Functions.X_pW(pw[i]);
+      end for;
 
       for i in 2:nSta loop
-
+        phi[i]=pw[i]/psat[i];
+        D[i]= (2*10^(-7)*T[i]^0.81)/patm;
         psat[i]= Modelica.Math.exp(-5800/T[i]+1.391-0.04864*T[i]+4.176*10^(-5)*T[i]^2-1.445*10^(-8)*T[i]^3+6.545*Modelica.Math.log(T[i]));
         T[i-1]-T[i] = Q_flow[i]/UAnSta;
         pw[i-1]-pw[i] = m_flow[i]/((nSta*D[i]*A)/(material.x*material.Mu));
-
       end for;
 
       for i in 1:nSta loop
           der(T[i]) = (Q_flow[i]-Q_flow[i+1])/C;
-          der(phi[i]) = ((m_flow[i]-m_flow[i+1])/dw_dphi[i])/(A/(0.4/nSta));
+          der(phi[i]) = ((m_flow[i]-m_flow[i+1])/dw_dphi[i])/(A*l);
       end for;
 
       annotation (Diagram(coordinateSystem(preserveAspectRatio=false, extent={{-100,
@@ -441,7 +437,7 @@ package HAM
         "Thermal conductance of construction (without surface heat transfer coefficients)";
 
       Modelica.SIunits.TemperatureDifference dT "port_a.T - port_b.T";
-
+      final parameter Real l = material.x/nSta;
       final parameter Integer nSta(min=1) = material.nSta
         "Number of state variables";
       final parameter Modelica.SIunits.ThermalConductance UAnSta = UA*nSta
@@ -453,13 +449,14 @@ package HAM
       parameter Modelica.SIunits.HeatCapacity C = m*material.c
         "Heat capacity associated with the temperature state";
       parameter Real  b = material.b;
+      parameter Real hv=2500 "latent heat of phase change";
+
       parameter Modelica.SIunits.Pressure patm = 101325 "atmospheric pressure";
 
       parameter Modelica.SIunits.Temperature T_a_start=293.15
-        "Initial temperature at port_a, used if steadyStateInitial = false"
         annotation (Dialog(group="Initialization", enable=not steadyStateInitial));
+
       parameter Modelica.SIunits.Temperature T_b_start=293.15
-        "Initial temperature at port_b, used if steadyStateInitial = false"
         annotation (Dialog(group="Initialization", enable=not steadyStateInitial));
 
     public
@@ -474,40 +471,44 @@ package HAM
       dT = heatMassPort_a.heatPort.T - heatMassPort_b.heatPort.T;
 
       psat[1]= Modelica.Math.exp(-5800/heatMassPort_a.heatPort.T+1.391-0.04864*heatMassPort_a.heatPort.T+4.176*10^(-5)*heatMassPort_a.heatPort.T^2-1.445*10^(-8)*heatMassPort_a.heatPort.T^3+6.545*Modelica.Math.log(heatMassPort_a.heatPort.T));
-      phi[1]= (heatMassPort_a.massPort.Xi_outflow*patm)/(heatMassPort_a.massPort.Xi_outflow*psat[1]+0.62198*psat[1]);
+    //phi[1]= (heatMassPort_a.massPort.Xi_outflow*patm)/(heatMassPort_a.massPort.Xi_outflow*psat[1]+0.62198*psat[1]);
 
-      Xi_outflow[1]= heatMassPort_a.massPort.Xi_outflow;
-      Xi_outflow[nSta] = heatMassPort_a.massPort.Xi_outflow;
+      // Xi_outflow[1]= heatMassPort_a.massPort.Xi_outflow;
+      // Xi_outflow[nSta] = heatMassPort_a.massPort.Xi_outflow;
+
+      Buildings.Utilities.Psychrometrics.Functions.pW_X(heatMassPort_a.massPort.Xi_outflow) - pw[1]= m_flow[1]/(nSta*D[1]*A/(material.x*material.Mu));
 
       heatMassPort_a.heatPort.Q_flow =+Q_flow[1];
-      heatMassPort_a.heatPort.T-T[1] = Q_flow[1]/UAnSta2;
+      heatMassPort_a.heatPort.T-T[1] = Q_flow[1]/UAnSta2 + m_flow[1]/(nSta*D[1]*A/(material.x*material.Mu));
+
+      pw[nSta] - Buildings.Utilities.Psychrometrics.Functions.pW_X(heatMassPort_b.massPort.Xi_outflow) = m_flow[nSta+1]/(nSta*D[nSta]*A/(material.x*material.Mu));
 
       heatMassPort_a.massPort.m_flow = +m_flow[1];
 
       heatMassPort_b.heatPort.Q_flow = -Q_flow[nSta+1];
-      T[nSta] - heatMassPort_b.heatPort.T = Q_flow[nSta+1]/UAnSta2;
+      T[nSta] - heatMassPort_b.heatPort.T = Q_flow[nSta+1]/UAnSta2 + m_flow[nSta]/(nSta*D[nSta]*A/(material.x*material.Mu));
 
       heatMassPort_b.massPort.m_flow = -m_flow[nSta+1];
 
       for i in 1:nSta loop
-        pw[i]=phi[i]*psat[i];
+        pw[i]=psat[i]*phi[i];
         D[i]= (2*10^(-7)*T[i]^0.81)/patm;
         dw_dphi[i]= material.xw_f*(b-1)*(b+1-2*phi[i])/((b-phi[i])*(b-phi[i]));
+        Xi_outflow[i] =Buildings.Utilities.Psychrometrics.Functions.X_pW(pw[i]);
         w[i]=material.xw_f*((b-1)*phi[i])/(b-phi[i]);
       end for;
 
       for i in 2:nSta loop
 
-        phi[i]= (Xi_outflow[i]*patm)/(0.62198*psat[i]+Xi_outflow[i]*psat[i]);
         psat[i]= Modelica.Math.exp(-5800/T[i]+1.391-0.04864*T[i]+4.176*10^(-5)*T[i]^2-1.445*10^(-8)*T[i]^3+6.545*Modelica.Math.log(T[i]));
         T[i-1]-T[i] = Q_flow[i]/UAnSta;
-        phi[i-1]*psat[i-1]-phi[i]*psat[i] = m_flow[i]/(nSta*D[i]*A/(material.x*material.Mu));
+       pw[i-1]-pw[i] = m_flow[i]/((nSta*D[i]*A)/(material.x*material.Mu));
 
       end for;
 
       for i in 1:nSta loop
-          der(T[i]) = (Q_flow[i]-Q_flow[i+1])/C;
-          der(phi[i]) = (m_flow[i]-m_flow[i+1])/dw_dphi[i];
+          der(T[i]) = ((Q_flow[i]-Q_flow[i+1]) + 2500*((m_flow[i]-m_flow[i+1])/dw_dphi[i])/(A*l))/(C+w[i]*4187);
+          der(phi[i]) = ((m_flow[i]-m_flow[i+1])/dw_dphi[i])/(A*l);
       end for;
 
       annotation (Diagram(coordinateSystem(preserveAspectRatio=false, extent={{-100,
@@ -593,7 +594,7 @@ Record containing material properties.
       annotation (Placement(transformation(extent={{-26,-6},{-14,6}})));
     Interfaces.HeatMassPort_b heatMassPort_b1
       annotation (Placement(transformation(extent={{54,-4},{62,4}})));
-    Sources.FixedTemperature fixedTemperature(T=283.15)
+    Sources.FixedTemperature fixedTemperature(T=293.15)
       annotation (Placement(transformation(extent={{-86,-12},{-66,8}})));
     Sources.FixedTemperature fixedTemperature1(T=293.15) annotation (Placement(
           transformation(
@@ -651,12 +652,14 @@ Record containing material properties.
       annotation (Placement(transformation(extent={{-46,-6},{-34,6}})));
     Interfaces.HeatMassPort_b heatMassPort_b1
       annotation (Placement(transformation(extent={{34,-6},{46,6}})));
-    Composants.FixedHumidity fixedHumidity(X=0.002)
+    Composants.FixedHumidity fixedHumidity(X=0.004)
       annotation (Placement(transformation(extent={{-88,-34},{-68,-14}})));
     Sources.FixedTemperature fixedTemperature(T=283.15)
       annotation (Placement(transformation(extent={{-90,22},{-70,42}})));
     Sources.FixedTemperature fixedTemperature1(T=293.15)
       annotation (Placement(transformation(extent={{74,22},{54,42}})));
+    Composants.FixedHumidity fixedHumidity1(X=0.01)
+      annotation (Placement(transformation(extent={{80,-40},{60,-20}})));
   equation
     connect(hAMConductor4_1.heatMassPort_a, heatMassPort_a1) annotation (Line(
         points={{-12.76,0},{-40,0}},
@@ -679,6 +682,10 @@ Record containing material properties.
     connect(fixedTemperature1.port, heatMassPort_b1.heatPort) annotation (Line(
         points={{54,32},{48,32},{48,0},{40,0}},
         color={191,0,0},
+        smooth=Smooth.None));
+    connect(fixedHumidity1.massPort, heatMassPort_b1.massPort) annotation (Line(
+        points={{61,-29.8},{61,-16.9},{40,-16.9},{40,0}},
+        color={0,127,0},
         smooth=Smooth.None));
     annotation (Diagram(coordinateSystem(preserveAspectRatio=false, extent={{-100,
               -100},{100,100}}),      graphics));
