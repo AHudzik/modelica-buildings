@@ -80,7 +80,16 @@ First implementation.
       b=1.4857,
       xw_80=85,
       xw_f=150,
-      Mu=180);
+      Mu=6);
+  record GypsumBoardHAM =
+                       Buildings.HeatTransfer.Data.Solids.GenericHAM (
+      k=0.2,
+      d=850,
+      c=850,
+      b=1.4857,
+      xw_80=6.3,
+      xw_f=400,
+      Mu=9);
   annotation (
 Documentation(
 info="<html>
