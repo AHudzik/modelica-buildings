@@ -48,7 +48,7 @@ First implementation.
       k=0.12,
       d=540,
       c=1210) "Plywood (k=0.12)";
-  record GenericHAM
+  record GenericHM
     extends BaseClasses.HygroThermalMaterial(final R=x/k,      final TSol=293.15,
                                                                final TLiq=293.15,
                                                                final LHea=0,
@@ -71,25 +71,25 @@ First implementation.
 </ul>
 </html>"));
 
-  end GenericHAM;
+  end GenericHM;
 
-  record ConcreteHAM = Buildings.HeatTransfer.Data.Solids.GenericHAM (
+  record ConcreteHM =  Buildings.HeatTransfer.Data.Solids.GenericHM (
       k=1.6,
       d=2300,
       c=850,
       b=1.4857,
-      xw_80=85,
-      xw_f=150,
-      Mu=6);
-  record GypsumBoardHAM =
-                       Buildings.HeatTransfer.Data.Solids.GenericHAM (
+      w_80=85,
+      w_f=150,
+      mu=6,
+      A=0.003);
+  record GypsumBoardHM=Buildings.HeatTransfer.Data.Solids.GenericHM (
       k=0.2,
       d=850,
       c=850,
       b=1.4857,
-      xw_80=6.3,
-      xw_f=400,
-      Mu=9);
+      w_80=6.3,
+      w_f=400,
+      mu=9);
   annotation (
 Documentation(
 info="<html>

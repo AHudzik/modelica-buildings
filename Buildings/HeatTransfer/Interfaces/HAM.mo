@@ -617,7 +617,10 @@ Record containing material properties.
   model test
 
     Composants.HAMConductor3 hAMConductor3_1(redeclare
-        Buildings.HeatTransfer.Data.Solids.GypsumBoardHAM material(x=0.1, nSta=8))
+        Buildings.HeatTransfer.Data.Solids.GypsumBoardHM material(
+        x=0.1,
+        nSta=8,
+        nStaRef=15))
      annotation (Placement(transformation(extent={{0,-30},{50,22}})));
      //   Buildings.HeatTransfer.Data.Solids.ConcreteHAM material(x=0.1, nSta=8));
     Interfaces.HeatMassPort_a heatMassPort_a1
@@ -675,7 +678,7 @@ Record containing material properties.
 
   model test2
     Composants.HAMConductor4 hAMConductor4_1(redeclare
-        Buildings.HeatTransfer.Data.Solids.ConcreteHAM material(x=0.4), phi(
+        Buildings.HeatTransfer.Data.Solids.ConcreteHM material(x=0.4),  phi(
           fixed=true))
       annotation (Placement(transformation(extent={{-22,-24},{22,24}})));
     Interfaces.HeatMassPort_a heatMassPort_a1

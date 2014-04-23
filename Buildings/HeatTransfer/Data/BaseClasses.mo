@@ -158,19 +158,20 @@ First implementation.
   record HygroThermalMaterial "Hygrothermal properties of materials "
     extends Material;
 
-  parameter Real xw_80
-      "Water content in kg(water)/kg(dry air) at 80% of relative humidity"
-      annotation (Dialog(tab="HAM"));
+  parameter Real w_80 "Water content at 80% of relative humidity"
+      annotation (Dialog(tab="HM"));
 
-  parameter Real xw_f
-      "Water content in kg(water)/kg(dry air) at 100% of relative humidity"
-       annotation (Dialog(tab="HAM"));
+  parameter Real w_f "Water content  at 100% of relative humidity"
+       annotation (Dialog(tab="HM"));
 
    parameter Real b "approximation factor"
-        annotation (Dialog(tab="HAM"));
+        annotation (Dialog(tab="HM"));
 
-   parameter Real Mu "Water vapour diffusion resistance factor"
-         annotation (Dialog(tab="HAM"));
+   parameter Real mu "Water vapour diffusion resistance factor"
+         annotation (Dialog(tab="HM"));
+
+   parameter Real A "Water absorption coefficient"
+  annotation (Dialog(tab="HM"));
 
   end HygroThermalMaterial;
 end BaseClasses;

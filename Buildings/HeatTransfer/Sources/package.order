@@ -2,3 +2,5 @@ FixedTemperature
 PrescribedTemperature
 FixedHeatFlow
 PrescribedHeatFlow
+FixedHumidity
+PrescribedHumidity
