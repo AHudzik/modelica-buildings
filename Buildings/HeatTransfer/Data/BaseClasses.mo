@@ -158,19 +158,36 @@ First implementation.
   record HygroThermalMaterial "Hygrothermal properties of materials "
     extends Material;
 
+      parameter Real sorp_tab_layer[ :,:] "sorption isotherm" annotation (Dialog(tab="Sorption Table"));
+
+      parameter Real       lamb_tab_layer[ :,:] annotation (Dialog(tab="HM"));
+
+      parameter Real dww_tab_layer[:,:]
+      "liquid transport coefficient for redistribution (table)"
+                                                               annotation (Dialog(tab="HM"));
+
+      parameter Real dws_tab_layer[:,:]
+      "liquid transport coefficient for suction (table)"
+                                                        annotation (Dialog(tab="HM"));
+
+      parameter Real my_tab_layer[:,:]
+      "water vapour diffusion of the physical layer (table)"
+                                                            annotation (Dialog(tab="HM"));
+
+            parameter Boolean Kunzel=false
+      "=true will use Kunzel approximation to calculate the sorptio isotherm, the thermal conduction coefficient and the vapour diffusion coefficient "
+          annotation (Dialog(group="HM"), Evaluate=true);
+
   parameter Real w_80 "Water content at 80% of relative humidity"
       annotation (Dialog(tab="HM"));
 
   parameter Real w_f "Water content  at 100% of relative humidity"
        annotation (Dialog(tab="HM"));
 
-   parameter Real b "approximation factor"
-        annotation (Dialog(tab="HM"));
-
    parameter Real mu "Water vapour diffusion resistance factor"
          annotation (Dialog(tab="HM"));
 
-   parameter Real A "Water absorption coefficient"
+   parameter Real A "Water absorption coefficient [kg/m^2*s^0.5]"
   annotation (Dialog(tab="HM"));
 
   end HygroThermalMaterial;

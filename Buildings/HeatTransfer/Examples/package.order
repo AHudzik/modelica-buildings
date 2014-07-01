@@ -5,4 +5,6 @@ ConductorSingleLayerPCM
 ConductorSingleLayerCylinder
 ConductorMultiLayer
 ConductorInitialization
-
+ConductorSingleLayerHM
+ConductorMultiLayerHM
+HeatAndMoistureTransfer

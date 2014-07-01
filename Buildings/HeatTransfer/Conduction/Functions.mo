@@ -37,4 +37,120 @@ package Functions
 
 </html>"));
   end p_sat;
+
+  function dw_dphi "Function calculating the derivative relative humidity"
+    input Real      phi;
+    input Real      w_f;
+    input Real      w_80;
+    input Real      b;
+    input Real tab_layer[:,:];
+    input Boolean Kunzel;
+    parameter Integer n = size(tab_layer,1);
+    Real temp_value[  n,2];
+    output Real dw_dphi;
+
+  algorithm
+    if Kunzel==true then
+    dw_dphi :=w_f*(b - 1)*b/((b - phi)^2);
+
+    else
+      temp_value :=Buildings.HeatTransfer.Conduction.Functions.der_sorp(
+        tab_layer);
+      dw_dphi:=Modelica.Math.Vectors.interpolate(temp_value[1,:], temp_value[2, :], phi);
+    end if;
+
+  end dw_dphi;
+
+  function w_Kunzel
+    input Real      w_f;
+    input Real      w_80;
+    input Real      b;
+    input Real      phi;
+
+    output Modelica.SIunits.MassConcentration w;
+
+  algorithm
+     w:= w_f*((b - 1)*phi)/(b - phi);
+
+  end w_Kunzel;
+
+  function lambdaHM
+    input Modelica.SIunits.Density d;
+    input Modelica.SIunits.ThermalConductivity k;
+    input Modelica.SIunits.MassConcentration w;
+    input Real b;
+    input Real tab_layer[ :,:];
+    input Boolean Kunzel;
+
+    output Modelica.SIunits.ThermalConductivity lambdaHM;
+  algorithm
+    if Kunzel == true then
+    lambdaHM :=k*(1 + b*w/d);
+
+    else
+    lambdaHM:= Modelica.Math.Vectors.interpolate(
+        tab_layer[1, :],
+        tab_layer[2, :],
+        w);
+    end if;
+  end lambdaHM;
+
+  function der_sorp
+    "Function for the calculation of the derivative of w by phi"
+  input Real sorp_tab_layer[  :,:];
+  parameter Integer n = size(sorp_tab_layer,1);
+      Real temp_value[n,1];
+      output Real value[  n,2];
+
+  algorithm
+          for j in 1:n-1 loop
+            temp_value[j,1] := (sorp_tab_layer[j+1,2]-sorp_tab_layer[j,2])/(sorp_tab_layer[j+1,1]-sorp_tab_layer[j,1]);
+          end for;
+          temp_value[n, 1] :=1E-25;
+          value := [sorp_tab_layer[:,1], temp_value[:,1]];
+  end der_sorp;
+
+  function sorption
+    input Real phi;
+    input Real w_f;
+    input Real w_80;
+    input Real b;
+    input Real tab_layer[ :,:];
+    input Boolean Kunzel;
+    output Real w;
+
+  algorithm
+    if Kunzel== true then
+      w:= w_f*((b - 1)*phi)/(b - phi);
+
+    else
+   w:=Modelica.Math.Vectors.interpolate(
+        tab_layer[2, :],
+        tab_layer[1, :],
+        phi);
+
+    end if;
+  end sorption;
+
+  function Capillary_transp_coef
+    input Real w;
+    input Real w_f;
+    input Modelica.SIunits.Area A;
+    input Real tab_layer[ :,:];
+    input Boolean Kunzel;
+
+  output Real Dw;
+
+  algorithm
+    if Kunzel== true then
+      Dw:= 3.8*(A/w_f)^2*1000^(w/(w_f - 1));
+
+    else
+      Dw:= Modelica.Math.Vectors.interpolate(
+        tab_layer[1, :],
+        tab_layer[2, :],
+        w);
+    end if;
+
+  end Capillary_transp_coef;
 end Functions;

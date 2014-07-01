@@ -114,6 +114,82 @@ First implementation.
           Solids.Concrete(x=0.2)}, final nLay=1)
     "Construction with 200mm concrete";
 
+  record GenericHM "HygroThermal properties of opaque constructions"
+    parameter Integer nLay(min=1, fixed=true) "Number of layers";
+    parameter Buildings.HeatTransfer.Data.BaseClasses.HygroThermalMaterial material[nLay]
+      "Layer by layer declaration of material, starting from outside to room-side"
+      annotation (choicesAllMatching=true, Evaluate=false, Placement(transformation(extent={{60,60},{80,80}})));
+
+   parameter Modelica.SIunits.Emissivity absIR_a=0.9
+      "Infrared absorptivity of surface a (usually outside-facing surface)";
+   parameter Modelica.SIunits.Emissivity absIR_b=0.9
+      "Infrared absorptivity of surface b (usually room-facing surface)";
+   parameter Modelica.SIunits.Emissivity absSol_a=0.5
+      "Solar absorptivity of surface a (usually outside-facing surface)";
+   parameter Modelica.SIunits.Emissivity absSol_b=0.5
+      "Solar absorptivity of surface b (usually room-facing surface)";
+   parameter Buildings.HeatTransfer.Types.SurfaceRoughness roughness_a=
+      Buildings.HeatTransfer.Types.SurfaceRoughness.Medium
+      "Exterior surface roughness";
+
+   annotation (Icon(coordinateSystem(preserveAspectRatio=true, extent={{-100,
+              -100},{100,100}}), graphics={
+          Rectangle(
+            extent={{-100,50},{100,-100}},
+            lineColor={0,0,255},
+            fillColor={255,255,85},
+            fillPattern=FillPattern.Solid),
+          Rectangle(
+            extent={{-54,42},{-36,-92}},
+            lineColor={0,0,0},
+            fillColor={215,215,215},
+            fillPattern=FillPattern.Forward),
+          Rectangle(
+            extent={{4,42},{54,-92}},
+            lineColor={0,0,0},
+            fillColor={215,215,215},
+            fillPattern=FillPattern.CrossDiag),
+          Text(
+            extent={{-127,113},{127,53}},
+            textString="%name",
+            lineColor={0,0,255}),
+          Rectangle(
+            extent={{-36,42},{4,-92}},
+            lineColor={0,0,0},
+            fillColor={255,255,255},
+            fillPattern=FillPattern.Backward)}),
+      defaultComponentName="opaCon",
+      Documentation(info="<html>
+Generic record with material definitions for constructions
+with one or more layers of material.
+By convention, <code>layer[1]</code> is facing the outside, and the last
+layer is facing the room-side.
+This is the same convention as is used in EnergyPlus and in Window 6.
+
+<p>
+The parameters <code>absIR_a</code> and <code>absIR_b</code>
+are used to compute infrared heat radiation (in the infrared spectrum).
+The parameters <code>absSol_a</code> and <code>absSol_b</code>
+are used to compute solar heat radiation (in the solar spectrum).
+</p>
+<p>
+The parameter <code>roughness_a</code> is used if the convective heat transfer
+coefficient of the exterior surface is computed based on the wind-speed, wind-direction
+and temperature difference. See
+<a href=\"modelica://Buildings.HeatTransfer.Convection.Exterior\">
+Buildings.HeatTransfer.Convection.Exterior</a>
+</p>
+
+     
+
+</html>"));
+
+  end GenericHM;
+
+  record Concrete200HM =
+      Buildings.HeatTransfer.Data.OpaqueConstructions.GenericHM (material={
+          Solids.ConcreteHM(x=0.2)}, final nLay=1)
+    "Construction with 200mm concrete";
   annotation (preferredView="info",
 Documentation(info="<html>
 <p>
@@ -139,5 +215,8 @@ First implementation.
 </li>
 </ul>
 </html>"));
-
+  record GypsumBoard50Concrete200HM =
+    Buildings.HeatTransfer.Data.OpaqueConstructions.GenericHM ( material={
+          Solids.GypsumBoardHM(x=0.05),Solids.ConcreteHM(x=0.2)}, final nLay=2)
+    "Construction with 50 mm gypsum board and 200 mm concrete";
 end OpaqueConstructions;
