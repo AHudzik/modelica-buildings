@@ -179,4 +179,16 @@ package Functions
     end if;
 
   end Dw;
+
+  function w_Kunz
+
+  input Real w_f;
+    input Real w_80;
+    input Real b;
+    input Real phi;
+    output Modelica.SIunits.MassConcentration w;
+  algorithm
+    w := w_f * (b - 1) * phi / (b - phi);
+
+  end w_Kunz;
 end Functions;

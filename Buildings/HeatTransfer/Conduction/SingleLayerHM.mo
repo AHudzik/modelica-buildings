@@ -46,9 +46,16 @@ model SingleLayerHM
   parameter Modelica.SIunits.Temperature T_ini=293.15;
   parameter Modelica.SIunits.MassConcentration w_ini;
 
+  parameter Integer switch_w "switch for the water content"
+    annotation (Dialog(tab="HM"));
+  parameter Integer switch_lamb "switch for the heat conductivity"
+    annotation (Dialog(tab="HM"));
+  parameter Integer switch_dw
+    "switch for the liquid transport coefficient for suction "
+    annotation (Dialog(tab="HM"));
+
   replaceable parameter Data.BaseClasses.HygroThermalMaterial material
-    "Material from Data.Solids, Data.SolidsPCM or Data.Resistances" annotation
-    (
+    "Material from Data.Solids, Data.SolidsPCM or Data.Resistances" annotation (
     Evaluate=true,
     choicesAllMatching=true,
     Placement(transformation(extent={{60,60},{80,80}})));
@@ -100,7 +107,7 @@ equation
       b,
       material.sorp_tab,
       material.por,
-      material.switch_w);
+      switch_w);
 
     lambda[i] = Buildings.HeatTransfer.Conduction.Functions.lambdaHM(
       material.d,
@@ -108,31 +115,29 @@ equation
       w[i],
       b,
       material.lamb_tab,
-      material.switch_lamb);
+      switch_lamb);
 
     w[i] = Buildings.HeatTransfer.Conduction.Functions.sorption(
       phi[i],
       material.w_f,
       b,
       material.sorp_tab,
-      material.switch_w,
-      material.por);
+      material.por,
+      switch_w);
 
     Xi_outflow[i] = Buildings.Utilities.Psychrometrics.Functions.pW_X(pw[i]);
 
   end for;
 
   // WATER VAPOUR DIFFUSION COEFFICIENT
-  kd[1] = (Buildings.HeatTransfer.Conduction.Functions.delta_L(T[1]))/material.mu
-    /(material.x/(2*nSta));
+  kd[1] = (Buildings.HeatTransfer.Conduction.Functions.delta_L(T[1]))/material.mu /(material.x/(2*nSta));
   for i in 2:nSta loop
     kd[i] = 1.0/((material.x/(2*nSta))/((
       Buildings.HeatTransfer.Conduction.Functions.delta_L(T[i]))/material.mu)
        + (material.x/(2*nSta))/((
       Buildings.HeatTransfer.Conduction.Functions.delta_L(T[i - 1]))/material.mu));
   end for;
-  kd[nSta + 1] = (Buildings.HeatTransfer.Conduction.Functions.delta_L(T[nSta]))
-    /material.mu/(material.x/(2*nSta));
+  kd[nSta + 1] = (Buildings.HeatTransfer.Conduction.Functions.delta_L(T[nSta]))/material.mu/(material.x/(2*nSta));
 
   // LIQUID WATER DIFFUSION COEFFIIENT
   D_phi[1] = dw_dphi[1]*(Buildings.HeatTransfer.Conduction.Functions.Dw(
@@ -141,7 +146,7 @@ equation
     material.A_layer,
     material.dww_tab,
     material.dws_tab,
-    material.switch_dw,
+    switch_dw,
     activatesuction))/(material.x/(2*nSta));
   for i in 2:nSta loop
     D_phi[i] = 1.0/(((material.x/(2*nSta))/(dw_dphi[i]*
@@ -151,7 +156,7 @@ equation
       material.A_layer,
       material.dww_tab,
       material.dws_tab,
-      material.switch_dw,
+      switch_dw,
       activatesuction))) + ((material.x/(2*nSta))/(dw_dphi[i - 1]*
       Buildings.HeatTransfer.Conduction.Functions.Dw(
       w[i - 1],
@@ -159,7 +164,7 @@ equation
       material.A_layer,
       material.dww_tab,
       material.dws_tab,
-      material.switch_dw,
+      switch_dw,
       activatesuction))));
   end for;
   D_phi[nSta + 1] = dw_dphi[nSta]*(
@@ -169,7 +174,7 @@ equation
     material.A_layer,
     material.dww_tab,
     material.dws_tab,
-    material.switch_dw,
+    switch_dw,
     activatesuction))/(material.x/(2*nSta));
 
   //THERMAL CONDUCTANCE
@@ -189,10 +194,9 @@ equation
 
   for i in 1:nSta loop
     Cm[i] = Cd + w[i]*Cw*V;
-    psat[i] = Buildings.HeatTransfer.Conduction.Functions.p_sat(T[i]);
+    psat[i] = Modelica.Media.Air.ReferenceMoistAir.Utilities.Water95_Utilities.psat(T[i]);
     phi[i] = pw[i]/psat[i];
-    Cm[i]*der(T[i]) + V*Cw*T[i]*dw_dphi[i]*der(phi[i]) = (Q_flow[i] - Q_flow[i
-       + 1]) + hv*(m_flow[i] - m_flow[i + 1])/V;
+    Cm[i]*der(T[i]) + V*Cw*T[i]*dw_dphi[i]*der(phi[i]) = (Q_flow[i] - Q_flow[i + 1]) + hv*(m_flow[i] - m_flow[i + 1])/V;
     dw_dphi[i]*der(phi[i]) = (m_flow[i] - m_flow[i + 1])/V;
   end for;
 

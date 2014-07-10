@@ -3,20 +3,23 @@ model test
 
   SingleLayerHM lay(
     phi_ini=0.2,
-    activatesuction=false,
     w_ini=0.003,
+    switch_lamb=2,
+    switch_dw=2,
+    switch_w=1,
+    activatesuction=false,
     T_ini=293.15,
     redeclare Buildings.HeatTransfer.Data.Solids.ConcreteHM material(
       switch_lamb=1,
       switch_dw=2,
       x=0.2,
       switch_w=1))
-    annotation (Placement(transformation(extent={{-20,-24},{22,24}})));
+    annotation (Placement(transformation(extent={{-18,-24},{24,24}})));
 
   Sources.FixedTemperature fixedTemperature(T=288.15)
     annotation (Placement(transformation(extent={{-72,36},{-52,56}})));
   Sources.FixedTemperature fixedTemperature1(T=296.15)
-    annotation (Placement(transformation(extent={{70,40},{50,60}})));
+    annotation (Placement(transformation(extent={{70,20},{50,40}})));
   Sources.FixedHumidity fixedHumidity(X=0.005)
     annotation (Placement(transformation(extent={{-76,-26},{-56,-6}})));
   Sources.FixedHumidity fixedHumidity1(X=0.008)
@@ -27,12 +30,12 @@ model test
     annotation (Placement(transformation(extent={{32,-4},{40,4}})));
 equation
   connect(lay.heatMassPort_a, heatMassPort_a1) annotation (Line(
-      points={{-20,0},{-40,0}},
+      points={{-18,0},{-40,0}},
       color={0,0,0},
       pattern=LinePattern.None,
       smooth=Smooth.None));
   connect(lay.heatMassPort_b, heatMassPort_b1) annotation (Line(
-      points={{22,0},{36,0}},
+      points={{24,0},{36,0}},
       color={127,0,127},
       smooth=Smooth.None));
   connect(fixedHumidity.massPort, heatMassPort_a1.massPort) annotation (Line(
@@ -48,7 +51,7 @@ equation
       color={0,0,0},
       smooth=Smooth.None));
   connect(fixedTemperature1.port, heatMassPort_b1.heatPort) annotation (Line(
-      points={{50,50},{44,50},{44,0},{36,0}},
+      points={{50,30},{44,30},{44,0},{36,0}},
       color={191,0,0},
       smooth=Smooth.None));
   annotation (Diagram(coordinateSystem(preserveAspectRatio=false, extent={{-100,
