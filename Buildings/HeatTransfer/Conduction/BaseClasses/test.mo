@@ -4,16 +4,16 @@ model test
   SingleLayerHM lay(
     phi_ini=0.2,
     w_ini=0.003,
-    switch_lamb=2,
-    switch_dw=2,
-    switch_w=1,
     activatesuction=false,
-    T_ini=293.15,
     redeclare Buildings.HeatTransfer.Data.Solids.ConcreteHM material(
       switch_lamb=1,
       switch_dw=2,
       x=0.2,
-      switch_w=1))
+      switch_w=1),
+    switch_lamb=2,
+    switch_dw=2,
+    T_ini=293.15,
+    switch_w=3)
     annotation (Placement(transformation(extent={{-18,-24},{24,24}})));
 
   Sources.FixedTemperature fixedTemperature(T=288.15)

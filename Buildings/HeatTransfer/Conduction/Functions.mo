@@ -48,15 +48,15 @@ package Functions
     input Real por;
     input Integer switch;
     parameter Integer n=size(tab_layer, 1);
-   // parameter Real phi_max=1.01;
+    parameter Real phi_max=1.01;
     Real temp_value[n, 2];
-   // Real w_max;
-    //constant Modelica.SIunits.Density Rho=1000;
+    Real w_max;
+    constant Modelica.SIunits.Density Rho=1000;
     output
       Buildings.HeatTransfer.Conduction.BaseClasses.MoistureStorageCapacity
       dw_dphi;
 
-    //constant Real B_H=1.0105;
+    constant Real B_H=1.0105;
   algorithm
     if (switch == 1) then
       dw_dphi := w_f*(b - 1)*b/((b - phi)^2);
@@ -65,13 +65,13 @@ package Functions
       temp_value := Buildings.HeatTransfer.Conduction.Functions.der_sorp(
         tab_layer);
       dw_dphi := Modelica.Math.Vectors.interpolate(
-          temp_value[1, :],
-          temp_value[2, :],
+          temp_value[:, 1],
+          temp_value[:, 2],
           phi);
 
-    //elseif ( switch == 3) then
-      //w_max := por*Rho;
-      //dw_dphi := (w_max*B_H*(B_H - phi_max)/phi_max)/(B_H - phi)^2;
+    else
+      w_max := por*Rho;
+      dw_dphi := (w_max*B_H*(B_H - phi_max)/phi_max)/(B_H - phi)^2;
 
     end if;
 
@@ -92,8 +92,8 @@ package Functions
 
     else
       lambdaHM := Modelica.Math.Vectors.interpolate(
-          tab_layer[1, :],
-          tab_layer[2, :],
+          tab_layer[:, 1],
+          tab_layer[:, 2],
           w);
     end if;
   end lambdaHM;
@@ -122,22 +122,22 @@ package Functions
     input Real por;
     input Integer switch;
     output Real w;
-    //constant Modelica.SIunits.Density Rho=1000;
-   // constant Real B_H=1.0105;
-   // parameter Real phi_max=1.01;
-    //Modelica.SIunits.MassConcentration w_max;
+    constant Modelica.SIunits.Density Rho=1000;
+    constant Real B_H=1.0105;
+    parameter Real phi_max=1.01;
+    Modelica.SIunits.MassConcentration w_max;
 
   algorithm
     if (switch == 1) then
       w := (w_f*(b - 1)*phi)/(b - phi);
     elseif (switch == 2) then
       w := Modelica.Math.Vectors.interpolate(
-          tab_layer[2, :],
-          tab_layer[1, :],
+          tab_layer[:, 1],
+          tab_layer[:, 2],
           phi);
-   // elseif (switch == 3) then
-   //   w_max := por*Rho;
-     // w := (-w_max*B_H*(B_H - phi_max))/B_H + (w_max*B_H*(B_H - phi_max))/(B_H - phi);
+    else
+      w_max := por*Rho;
+     w := (-w_max*B_H*(B_H - phi_max))/B_H + (w_max*B_H*(B_H - phi_max))/(B_H - phi);
 
     end if;
 
@@ -167,13 +167,13 @@ package Functions
     else
       if activatesuction then
         Dw := Modelica.Math.Vectors.interpolate(
-            tab_dws[1, :],
-            tab_dws[2, :],
+            tab_dws[:, 1],
+            tab_dws[:, 1],
             w);
       else
         Dw := Modelica.Math.Vectors.interpolate(
-            tab_dww[1, :],
-            tab_dww[2, :],
+            tab_dww[:, 1],
+            tab_dww[:, 2],
             w);
       end if;
     end if;
