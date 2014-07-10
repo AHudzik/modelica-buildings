@@ -1,11 +1,21 @@
 within Buildings.HeatTransfer.Conduction.BaseClasses;
 model test
-  SingleLayerHM lay(redeclare Buildings.HeatTransfer.Data.Solids.ConcreteHM
-      material(x=0.3, Kunzel=false))
+
+  SingleLayerHM lay(
+    phi_ini=0.2,
+    activatesuction=false,
+    w_ini=0.003,
+    T_ini=293.15,
+    redeclare Buildings.HeatTransfer.Data.Solids.ConcreteHM material(
+      switch_lamb=1,
+      switch_dw=2,
+      x=0.2,
+      switch_w=1))
     annotation (Placement(transformation(extent={{-20,-24},{22,24}})));
-  Sources.FixedTemperature fixedTemperature(T=293.15)
+
+  Sources.FixedTemperature fixedTemperature(T=288.15)
     annotation (Placement(transformation(extent={{-72,36},{-52,56}})));
-  Sources.FixedTemperature fixedTemperature1(T=298.15)
+  Sources.FixedTemperature fixedTemperature1(T=296.15)
     annotation (Placement(transformation(extent={{70,40},{50,60}})));
   Sources.FixedHumidity fixedHumidity(X=0.005)
     annotation (Placement(transformation(extent={{-76,-26},{-56,-6}})));

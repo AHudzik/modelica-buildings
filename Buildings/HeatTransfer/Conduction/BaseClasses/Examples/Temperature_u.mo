@@ -56,8 +56,7 @@ protected
     relErr :=(T - TExa)/dTCha;
   end relativeError;
 
-  constant Real conFac(unit="1/s") = 1
-    "Conversion factor to satisfy unit check";
+  constant Real conFac(unit="1/s") = 1 "Conversion factor to satisfy unit check";
 initial algorithm
   // Calculate derivatives at support points (non-monotone)
   (ud, Td, dT_du) :=

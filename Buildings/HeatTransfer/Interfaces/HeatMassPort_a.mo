@@ -43,10 +43,10 @@ connector HeatMassPort_a
     <p>This connector is used for 1-dimensional heat and moisture flow between components.
 The variables in the connector are:</p>
 <pre>
-T       Temperature in [Kelvin].
-Xi_outflow Mass fraction [Kg/Kg of dry air].
-Q_flow  Heat flow rate in [Watt].
-m_flow  Mass flow rate in [kg/s].
+T           Temperature in [K].
+Xi_outflow  Mass fraction [kg/kg of dry air].
+Q_flow      Heat flow rate in [W].
+m_flow      Mass flow rate in [kg/s].
 </pre>
 <p>According to the Modelica sign convention, a <b>positive</b> heat flow
 rate <b>Q_flow</b> and  a <b>positive</b> mass flow

@@ -6,3 +6,8 @@ temperature_u
 Examples
 courbe_sorption
 test
+LiquidConductionCoefficient
+RelativeHumidity
+MoistureStorageCapacity
+VapourDiffusionCoefficient
+CapillaryTransportCoefficient

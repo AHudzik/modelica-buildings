@@ -11,21 +11,19 @@ package BaseClasses "Base classes for package Data"
       "Thermal resistance of a unit area of material";
     parameter Integer nStaRef(min=0) = 3
       "Number of state variables in a reference material of 0.2 m concrete";
-    parameter Integer nSta(min=1)=max(1, integer(ceil(nStaReal)))
+    parameter Integer nSta(min=1) = max(1, integer(ceil(nStaReal)))
       "Actual number of state variables in material"
-      annotation(Evaluate=true, Dialog(tab="Advanced"));
-    parameter Boolean steadyState= (c == 0 or d == 0)
+      annotation (Evaluate=true,Dialog(tab="Advanced"));
+    parameter Boolean steadyState=(c == 0 or d == 0)
       "Flag, if true, then material is computed using steady-state heat conduction"
-      annotation(Evaluate=true);
+      annotation (Evaluate=true);
     parameter Real piRef=331.4
       "Ratio x/sqrt(alpha) for reference material of 0.2 m concrete"
       annotation (Dialog(tab="Advanced"));
     parameter Real piMat=if steadyState then piRef else x*sqrt(c*d)/sqrt(k)
-      "Ratio x/sqrt(alpha)"
-      annotation(Evaluate=true, Dialog(tab="Advanced"));
+      "Ratio x/sqrt(alpha)" annotation (Evaluate=true, Dialog(tab="Advanced"));
     parameter Real nStaReal(min=0) = nStaRef*piMat/piRef
-      "Number of states as a real number"
-      annotation (Dialog(tab="Advanced"));
+      "Number of states as a real number" annotation (Dialog(tab="Advanced"));
 
     parameter Modelica.SIunits.Temperature TSol
       "Solidus temperature, used only for PCM."
@@ -37,15 +35,16 @@ package BaseClasses "Base classes for package Data"
       "Latent heat of phase change"
       annotation (Dialog(group="Properties for phase change material"));
 
-    constant Boolean ensureMonotonicity = false
+    constant Boolean ensureMonotonicity=false
       "Set to true to force derivatives dT/du to be monotone";
 
-    constant Boolean phasechange = false
+    constant Boolean phasechange=false
       "Flag, true if the material is a phase change material"
-          annotation (Dialog(group="Properties for phase change material"));
+      annotation (Dialog(group="Properties for phase change material"));
 
-    annotation (preferredView="info",
-    Documentation(info="<html>
+    annotation (
+      preferredView="info",
+      Documentation(info="<html>
 Base record for materials that declares the thermal properties. 
 <br/>
 <p>
@@ -61,8 +60,7 @@ will be defined in the model of the construction that uses this material.
 This allows use of the same material in walls, floors
 and ceilings of different surface area.
 </p>
-</html>",
-  revisions="<html>
+</html>", revisions="<html>
 <ul>
 <li>
 June 3 2010, by Michael Wetter:<br/>
@@ -73,7 +71,8 @@ March 6 2010, by Michael Wetter:<br/>
 First implementation.
 </li>
 </ul>
-</html>"),   Icon(graphics={
+</html>"),
+      Icon(graphics={
           Text(
             extent={{-94,44},{-16,12}},
             lineColor={0,0,0},
@@ -114,19 +113,19 @@ First implementation.
     parameter Modelica.SIunits.ThermalConductivity k "Thermal conductivity";
     parameter Modelica.SIunits.SpecificHeatCapacity c "Specific heat capacity";
     parameter Modelica.SIunits.Density d "Mass density";
-    parameter Boolean steadyState= (c == 0 or d == 0)
+    parameter Boolean steadyState=(c == 0 or d == 0)
       "Flag, if true, then material is computed using steady-state heat conduction"
-      annotation(Evaluate=true);
-   annotation (preferredView="info",
-    Documentation(info="<html>
+      annotation (Evaluate=true);
+    annotation (
+      preferredView="info",
+      Documentation(info="<html>
 Base record for materials, used in circular geometry or other configurations, that only declares the thermal properties. 
 <br/>
 <p>
 The specific heat capacity can be zero, in which case the material
 will be modeled as a thermal resistor that does not store energy.
 </p>
-</html>",
-  revisions="<html>
+</html>", revisions="<html>
 <ul>
 <li>
 April 2011, by Pierre Vigouroux:<br/>
@@ -136,7 +135,8 @@ April 12 2011, by Pierre Vigouroux:<br/>
 First implementation.
 </li>
 </ul>
-</html>"),   Icon(graphics={
+</html>"),
+      Icon(graphics={
           Line(points={{-100,-50},{100,-50}}, color={0,0,0}),
           Text(
             visible=not (c == 0),
@@ -152,43 +152,51 @@ First implementation.
             extent={{-74,-12},{-14,-36}},
             lineColor={0,0,0},
             textString="k=%k"),
-          Line(points={{-100,0},{100,0}},     color={0,0,0})}));
+          Line(points={{-100,0},{100,0}}, color={0,0,0})}));
   end ThermalProperties;
 
   record HygroThermalMaterial "Hygrothermal properties of materials "
     extends Material;
 
-      parameter Real sorp_tab_layer[ :,:] "sorption isotherm" annotation (Dialog(tab="Sorption Table"));
+    parameter Real sorp_tab[:, :] "sorption isotherm"
+      annotation (Dialog(tab="Sorption Table"));
 
-      parameter Real       lamb_tab_layer[ :,:] annotation (Dialog(tab="HM"));
+    parameter Real lamb_tab[:, :] annotation (Dialog(tab="HM"));
 
-      parameter Real dww_tab_layer[:,:]
+    parameter Real dww_tab[:, :]
       "liquid transport coefficient for redistribution (table)"
-                                                               annotation (Dialog(tab="HM"));
-
-      parameter Real dws_tab_layer[:,:]
-      "liquid transport coefficient for suction (table)"
-                                                        annotation (Dialog(tab="HM"));
-
-      parameter Real my_tab_layer[:,:]
-      "water vapour diffusion of the physical layer (table)"
-                                                            annotation (Dialog(tab="HM"));
-
-            parameter Boolean Kunzel=false
-      "=true will use Kunzel approximation to calculate the sorptio isotherm, the thermal conduction coefficient and the vapour diffusion coefficient "
-          annotation (Dialog(group="HM"), Evaluate=true);
-
-  parameter Real w_80 "Water content at 80% of relative humidity"
       annotation (Dialog(tab="HM"));
 
-  parameter Real w_f "Water content  at 100% of relative humidity"
-       annotation (Dialog(tab="HM"));
+    parameter Real dws_tab[:, :]
+      "liquid transport coefficient for suction (table)"
+      annotation (Dialog(tab="HM"));
 
-   parameter Real mu "Water vapour diffusion resistance factor"
-         annotation (Dialog(tab="HM"));
+    parameter Real my_tab[:, :]
+      "water vapour diffusion of the physical layer (table)"
+      annotation (Dialog(tab="HM"));
 
-   parameter Real A "Water absorption coefficient [kg/m^2*s^0.5]"
-  annotation (Dialog(tab="HM"));
+    parameter Modelica.SIunits.MassConcentration w_80
+      "Water content at 80% of relative humidity" annotation (Dialog(tab="HM"));
 
+    parameter Modelica.SIunits.MassConcentration w_f
+      "Water content  at 100% of relative humidity"
+      annotation (Dialog(tab="HM"));
+
+    parameter Real mu "Water vapour diffusion resistance factor [-]"
+      annotation (Dialog(tab="HM"));
+
+    parameter Real A_layer "Water absorption coefficient [kg/m^2*s^0.5]"
+      annotation (Dialog(tab="HM"));
+
+    parameter Real por(min=0,max=1) "porosity of the material [-]"
+      annotation (Dialog(tab="HM"));
+
+    parameter Integer switch_w "switch for the water content"
+      annotation (Dialog(tab="HM"));
+    parameter Integer switch_lamb "switch for the heat conductivity"
+      annotation (Dialog(tab="HM"));
+    parameter Integer switch_dw
+      "switch for the liquid transport coefficient for suction "
+      annotation (Dialog(tab="HM"));
   end HygroThermalMaterial;
 end BaseClasses;
