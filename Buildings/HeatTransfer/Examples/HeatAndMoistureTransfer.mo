@@ -10,11 +10,11 @@ model HeatAndMoistureTransfer
     azi=Buildings.HeatTransfer.Types.Azimuth.N)
     annotation (Placement(transformation(extent={{-42,-8},{-26,8}})));
   Modelica.Blocks.Sources.Constant vWin(k=2) "Wind speed"
-    annotation (Placement(transformation(extent={{-94,58},{-78,74}})));
+    annotation (Placement(transformation(extent={{-92,52},{-76,68}})));
   Modelica.Blocks.Sources.Ramp direction1(
                                          duration=3600, height=2*3.14159)
     "Wind direction (0=from north)"
-    annotation (Placement(transformation(extent={{-94,30},{-78,46}})));
+    annotation (Placement(transformation(extent={{-94,20},{-78,36}})));
   Sources.PrescribedTemperature prescribedTemperature
     annotation (Placement(transformation(extent={{-70,-20},{-56,-6}})));
   Sources.PrescribedHumidity prescribedHumidity
@@ -26,14 +26,19 @@ model HeatAndMoistureTransfer
   Modelica.Blocks.Sources.Constant const(k=0.005)
     annotation (Placement(transformation(extent={{-100,-40},{-86,-26}})));
   Modelica.Blocks.Sources.Constant const1(k=283.15)
-    annotation (Placement(transformation(extent={{-100,-18},{-86,-4}})));
+    annotation (Placement(transformation(extent={{-100,-20},{-86,-6}})));
   Interfaces.HeatMassPort_a solid1
     annotation (Placement(transformation(extent={{-50,-26},{-42,-18}})));
   Interfaces.HeatMassPort_b fluid1
     annotation (Placement(transformation(extent={{62,-4},{68,2}})));
-  Conduction.SingleLayerHM lay(redeclare
-      Buildings.HeatTransfer.Data.Solids.ConcreteHM material)
-    annotation (Placement(transformation(extent={{-8,-10},{12,10}})));
+  Conduction.SingleLayerHM lay(
+    activatesuction=true,
+    w_ini=12,
+    switch_w=2,
+    switch_lamb=2,
+    redeclare Buildings.HeatTransfer.Data.Solids.ConcreteHM material(x=0.2),
+    switch_dw=1)
+    annotation (Placement(transformation(extent={{-6,-10},{14,10}})));
 equation
   connect(fixedTemperature.port, fluid1.heatPort) annotation (Line(
       points={{86,27},{84,27},{84,-1},{65,-1}},
@@ -44,11 +49,11 @@ equation
       color={0,0,0},
       smooth=Smooth.None));
   connect(vWin.y, exteriorHM.v) annotation (Line(
-      points={{-77.2,66},{-60,66},{-60,8},{-43.6,8}},
+      points={{-75.2,60},{-54,60},{-54,8},{-43.6,8}},
       color={0,0,127},
       smooth=Smooth.None));
   connect(direction1.y, exteriorHM.dir) annotation (Line(
-      points={{-77.2,38},{-60,38},{-60,4},{-43.6,4}},
+      points={{-77.2,28},{-66,28},{-66,4},{-43.6,4}},
       color={0,0,127},
       smooth=Smooth.None));
   connect(exteriorHM.solid, solid1) annotation (Line(
@@ -69,7 +74,7 @@ equation
       color={0,0,127},
       smooth=Smooth.None));
   connect(const1.y, prescribedTemperature.T) annotation (Line(
-      points={{-85.3,-11},{-77.65,-11},{-77.65,-13},{-71.4,-13}},
+      points={{-85.3,-13},{-71.4,-13}},
       color={0,0,127},
       smooth=Smooth.None));
   connect(interiorHM.fluid, fluid1) annotation (Line(
@@ -77,11 +82,11 @@ equation
       color={127,0,127},
       smooth=Smooth.None));
   connect(exteriorHM.fluid, lay.heatMassPort_a) annotation (Line(
-      points={{-26,0},{-8,0}},
+      points={{-26,0},{-6,0}},
       color={127,0,127},
       smooth=Smooth.None));
   connect(lay.heatMassPort_b, interiorHM.solid) annotation (Line(
-      points={{12,0},{24,0},{24,0.48},{36,0.48}},
+      points={{14,0},{24,0},{24,0.48},{36,0.48}},
       color={127,0,127},
       smooth=Smooth.None));
   annotation (Diagram(coordinateSystem(preserveAspectRatio=false, extent={{-100,

@@ -24,8 +24,8 @@ model SingleLayerHM
 
   Modelica.SIunits.MassFraction Xi_outflow[nSta] "mass fraction at the state";
 
-  Modelica.SIunits.MassConcentration w[nSta](each start=w_ini)
-    "Water content at the states";
+  Modelica.SIunits.MassConcentration w[nSta] "Water content at the states";
+                                            //(each start=w_ini)
 
   Modelica.SIunits.HeatCapacity Cm[nSta]
     "Heat capacity of moist material at the states";
@@ -44,7 +44,6 @@ model SingleLayerHM
   parameter Buildings.HeatTransfer.Conduction.BaseClasses.RelativeHumidity
     phi_ini=0.0 "Initial value of relative humidity at the nodes";
   parameter Modelica.SIunits.Temperature T_ini=293.15;
-  parameter Modelica.SIunits.MassConcentration w_ini;
 
   parameter Integer switch_w "switch for the water content"
     annotation (Dialog(tab="HM"));
@@ -113,7 +112,7 @@ equation
       material.d,
       material.k,
       w[i],
-      b,
+      material.b_h,
       material.lamb_tab,
       switch_lamb);
 
@@ -274,29 +273,49 @@ Buildings.HeatTransfer.Data.Solids.</a>
    &part;(&lambda;(w)&sdot; &part;T(s,t) &frasl; &part;s)/&part;s + h<sub>v</sub>&sdot;&part;( &delta;<sub>p</sub>&sdot; (&part;(&phi;&sdot;P<sub>sat</sub>)&frasl; &part;s)) &frasl; &part;s
 </p>
 <p>
-where 
-<i>dH &frasl; dT</i>
-is the heat storage capacity of the moist building material in [J/m&sup3;K], H is the enthalpy of the building material in [J/m<sup>3</sup>] : 
+Where : <ul>
+<p> <i>dH &frasl; dT</i>
+is the heat storage capacity of the moist building material in [J/m&sup3;K]</P>
+<p>H is the enthalpy of the building material in [J/m<sup>3</sup>] : 
 <p align=\"center\" style=\"font-style:italic;\">
 H = &rho;c<sub>s</sub>&sdot;T + c<sub>w</sub>&sdot;w
-   </p>
+</p>
+</p>
 <p>
 <i>T</i>
-is the temperature in [K] at location <i>s</i> and time <i>t</i> , <i>w</i> is the water content of the building material at location <i>s</i> and time <i>t</i> in [kg/m<sup>3</sup>], <i>h<sub>v</sub></i>  is the evaporation enthalpy of the water and <i>P<sub>sat</sub></i> the water vapour saturation pressure.
-</p>
-<i>&lambda;(w)</i>
-is the thermal conductivity of moist building material in [W/mK] :
-</p>
+is the temperature in [K] at location <i>s</i> and time <i>t</i> </p>
 
-<p align=\"center\" style=\"font-style:italic;\">
-&lambda;(w) = &lambda;(1 + b&sdot;w/&rho;)
+<i>h<sub>v</sub></i>   is the evaporation enthalpy of the water in [J/kg]</p> 
+<p> <i>P<sub>sat</sub></i>  the water vapour saturation pressure [Pa]
 </p>
 <p>
-<i>b</i>
-[.] is an approximation factor used by Kunzel to take into account the influence of moisture on the thermal conductivity of the material. It must be greater than one and it can be determined from the equilibrium water content at 80% of relative humidity :
-<p align=\"center\" style=\"font-style:italic;\">
-b = 0.8&sdot;(w_80-w_f)/(w_80-0.8&sdot;w_f)
+&phi; is the relative humidity 
 </p>
+<p>
+<i>&lambda;(w)</i>
+is the thermal conductivity of moist building material in [W/mK], it can be determined by two different ways :
+</p>
+
+<ul><p >
+<b> If </b> switch_lamb = 1 <b>then</b> <i>&lambda; = &lambda;&sdot;(1 + b_h&sdot;w/&rho;)</i>
+</p>
+<p>
+<i>b_h</i>
+ is the thermal conductivity supplement, an approximation factor used to determine the influence of moisture on the thermal conductivity. 
+</p>
+<p>
+<b> If </b> switch_lamb is equal to any other integer <b> then </b> &lambda; is determined by a linear interpolation of the table stored in the material record using 
+the fonction <a href=\"modelica://Modelica.Math.Vectors.interpolate\"> Modelica.Math.Vectors.interpolate </a>
+</p></ul>
+<p>
+<i>w</i>  is the water content of the building material in [kg/m<sup>3</sup>] at location <i>s</i> and time <i>t</i> it depend of the sorption isotherm of the material
+</p>
+<ul> <b> If </b> switch_w = 1 <b> then </b> w is a determined by an approximation of the sorption isotherm :
+<p align=\"center\" style=\"font-style:italic;\">w = w<sub>f</sub>&sdot;((b - 1)&sdot;&phi;/(b - &phi;)) </p>
+<p align=\"center\" style=\"font-style:italic;\">b = 0.8&sdot;(w<sub>80</sub>-w<sub>f</sub>)/(w<sub>80</sub>-0.8&sdot;w<sub>f</sub>)</p>
+
+It must be greater than one and it can be determined from the equilibrium water content at 80% of relative humidity :
+
 If Kunzel is false, the parameter b is not used in the model, instead the model uses linear interpolations of the sorption isotherm with the data stored in <a href=\"modelica://Buildings.HeatTransfer.Data.BaseClasses.HygroThermalMaterial\"> Buildings.HeatTransfer.Data.BaseClasses.HygroThermalMaterial </a>. If Kunzel is true, b is used to calculate dw &frasl; d&phi;, w and &lambda; at each node.
    <p>
    <i>&delta;<sub>p</sub></i> is the water permeability of the building material [kg/msPa] :

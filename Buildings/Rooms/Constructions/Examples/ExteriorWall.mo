@@ -45,11 +45,11 @@ model ExteriorWall "Test model for an exterior wall without a window"
     annotation (Placement(transformation(extent={{-120,60},{-100,80}})));
 equation
   connect(prescribedTemperature.port, theCol.port_b) annotation (Line(
-      points={{-100,20},{-90,20},{-90,20},{-80,20}},
+      points={{-100,20},{-80,20}},
       color={191,0,0},
       smooth=Smooth.None));
   connect(theCol.port_a, con.fluid) annotation (Line(
-      points={{-60,20},{-50,20},{-50,20},{-40,20}},
+      points={{-60,20},{-40,20}},
       color={191,0,0},
       smooth=Smooth.None));
   connect(weaDat.weaBus, bouConExt.weaBus) annotation (Line(
@@ -66,16 +66,16 @@ equation
       color={191,0,0},
       smooth=Smooth.None));
   connect(bouConExt.opa_a, conExt.opa_a) annotation (Line(
-      points={{76,-46.6667},{44,-46.6667},{44,-46},{-1.66533e-15,-46},{
-          -1.66533e-15,-14}},
+      points={{76,-46.6667},{44,-46.6667},{44,-46},{-1.66533e-015,-46},{
+          -1.66533e-015,-14}},
       color={191,0,0},
       smooth=Smooth.None));
   annotation (
 experiment(StopTime=1209600),
 __Dymola_Commands(file="modelica://Buildings/Resources/Scripts/Dymola/Rooms/Constructions/Examples/ExteriorWall.mos"
         "Simulate and plot"),
-    Diagram(coordinateSystem(preserveAspectRatio=true, extent={{-200,-100},{200,
-            100}})),
+    Diagram(coordinateSystem(preserveAspectRatio=false,extent={{-200,-100},{200,
+            100}}), graphics),
     Documentation(info="<html>
 <p>
 This model tests the exterior construction without windows.

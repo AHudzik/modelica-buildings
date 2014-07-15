@@ -88,6 +88,7 @@ First implementation.
           118.0, 1.2e-10],
       my_tab=[0.0, 180; 1.0, 180],
       lamb_tab=[0.0, 1.6; 180, 1.6],
+      b_h=8,
       por=0.18);
   record GypsumBoardHM = Buildings.HeatTransfer.Data.Solids.GenericHM (
       k=0.2,
@@ -97,6 +98,7 @@ First implementation.
       w_f=400,
       mu=9,
       por=0.65,
+      b_h=4,
       A_layer=0.004,
       sorp_tab=[0.0, 0.0; 0.5, 3.6; 0.65, 5.2; 0.8, 6.3; 0.9, 11.0; 0.93, 17.0;
           0.95, 19.0; 0.99, 113.0; 0.995, 124.0; 0.999, 328.0; 0.9995, 378.0;

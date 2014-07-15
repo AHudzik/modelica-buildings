@@ -190,13 +190,7 @@ First implementation.
 
     parameter Real por(min=0,max=1) "porosity of the material [-]"
       annotation (Dialog(tab="HM"));
+    parameter Real b_h "moisture supplement in thermal conductivity";
 
-    parameter Integer switch_w "switch for the water content"
-      annotation (Dialog(tab="HM"));
-    parameter Integer switch_lamb "switch for the heat conductivity"
-      annotation (Dialog(tab="HM"));
-    parameter Integer switch_dw
-      "switch for the liquid transport coefficient for suction "
-      annotation (Dialog(tab="HM"));
   end HygroThermalMaterial;
 end BaseClasses;

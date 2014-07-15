@@ -11,10 +11,20 @@ model MultiLayerHM
   Real phi[sum(nSta)];
   Modelica.SIunits.MassConcentration w[sum(nSta)];
 
+  parameter Integer switch_w "switch for the water content"
+    annotation (Dialog(tab="HM"));
+  parameter Integer switch_lamb "switch for the heat conductivity"
+    annotation (Dialog(tab="HM"));
+  parameter Integer switch_dw
+    "switch for the liquid transport coefficient for suction "
+    annotation (Dialog(tab="HM"));
+
+parameter Boolean activatesuction;
+
   extends Buildings.HeatTransfer.Conduction.BaseClasses.PartialConstructionHM;
 
 protected
-  SingleLayerHM[nLay] lay(each final A=A, material=layers.material)
+  SingleLayerHM[nLay] lay(each final A=A, material=layers.material, switch_w=switch_w, switch_lamb=switch_lamb, switch_dw=switch_dw, activatesuction=activatesuction)
     "Material layer"
     annotation (Placement(transformation(extent={{-20,-12},{0,12}})));
 
