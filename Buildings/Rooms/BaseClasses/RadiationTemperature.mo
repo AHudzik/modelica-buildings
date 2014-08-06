@@ -196,7 +196,7 @@ equation
   else
       conSurBou[1].T = 293.15;
   end if;
-  
+
   if haveConExtWin then
     for i in 1:NConExtWin loop
       0 = conExtWin[i].Q_flow;

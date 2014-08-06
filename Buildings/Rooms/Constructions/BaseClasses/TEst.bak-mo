@@ -1,0 +1,66 @@
+within Buildings.Rooms.Constructions.BaseClasses;
+model TEst
+  import Buildings;
+  BoundaryConditions.WeatherData.ReaderTMY3 weaDat
+    annotation (Placement(transformation(extent={{100,140},{120,160}})));
+  BoundaryConditions.WeatherData.Bus weaBus
+    annotation (Placement(transformation(extent={{100,100},{120,120}})));
+protected
+  Utilities.Psychrometrics.X_pTphi x_pTphi
+    annotation (Placement(transformation(extent={{88,92},{68,112}})));
+public
+  HeatTransfer.Sources.PrescribedHumidity prescribedHumidity
+    annotation (Placement(transformation(extent={{56,92},{36,112}})));
+  HeatTransfer.Sources.PrescribedTemperature prescribedTemperature
+    annotation (Placement(transformation(extent={{88,54},{68,74}})));
+  Buildings.Rooms.BaseClasses.HeatGain heatGain
+    annotation (Placement(transformation(extent={{-120,40},{-100,60}})));
+equation
+  connect(weaBus, weaDat.solBus) annotation (Line(
+      points={{110,110},{110,126},{110,140.5},{110.4,140.5}},
+      color={255,204,51},
+      thickness=0.5,
+      smooth=Smooth.None), Text(
+      string="%first",
+      index=-1,
+      extent={{-6,3},{-6,3}}));
+  connect(weaBus.pAtm, x_pTphi.p_in) annotation (Line(
+      points={{110,110},{100,110},{100,108},{90,108}},
+      color={255,204,51},
+      thickness=0.5,
+      smooth=Smooth.None), Text(
+      string="%first",
+      index=-1,
+      extent={{-6,3},{-6,3}}));
+  connect(weaBus.TDryBul, x_pTphi.T) annotation (Line(
+      points={{110,110},{100,110},{100,102},{90,102}},
+      color={255,204,51},
+      thickness=0.5,
+      smooth=Smooth.None), Text(
+      string="%first",
+      index=-1,
+      extent={{-6,3},{-6,3}}));
+  connect(weaBus.relHum, x_pTphi.phi) annotation (Line(
+      points={{110,110},{102,110},{102,96},{90,96}},
+      color={255,204,51},
+      thickness=0.5,
+      smooth=Smooth.None), Text(
+      string="%first",
+      index=-1,
+      extent={{-6,3},{-6,3}}));
+  connect(x_pTphi.X[1], prescribedHumidity.X) annotation (Line(
+      points={{67,102},{58,102}},
+      color={0,0,127},
+      smooth=Smooth.None));
+  connect(weaBus.TDryBul, prescribedTemperature.T) annotation (Line(
+      points={{110,110},{100,110},{100,64},{90,64}},
+      color={255,204,51},
+      thickness=0.5,
+      smooth=Smooth.None), Text(
+      string="%first",
+      index=-1,
+      extent={{-6,3},{-6,3}}));
+  annotation (Diagram(coordinateSystem(extent={{-180,-180},{180,180}},
+          preserveAspectRatio=false), graphics), Icon(coordinateSystem(extent={
+            {-180,-180},{180,180}})));
+end TEst;

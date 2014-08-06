@@ -177,7 +177,7 @@ Hartwig M. Kunzel. 1995. Simultaneous Heat and Moisture transport in Building Co
 <ul>
 
 <li>
-March 10 2010, by Michael Wetter:<br/>
+March 10 2014, by Antoine Hudzik:<br/>
 First implementation.
 </li>
 </ul>

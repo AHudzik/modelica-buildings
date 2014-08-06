@@ -110,6 +110,12 @@ First implementation.
 </ul>
 </html>"));
   end Azimuth;
+
+  type LiquidConductionCoefficient = Real(final quantity="LiquidConductionCoefficient", final unit="kg/ms");
+  type RelativeHumidity = Real(final quantity="RelativeHumidity", final unit="1");
+  type MoistureStorageCapacity = Real(final quantity="MoistureStorageCapacity", final unit="kg/m3");
+  type VapourDiffusionCoefficient = Real(final quantity="VapourDiffusionCoefficient", final unit="kg/m2.s.Pa");
+  type CapillaryTransportCoefficient = Real(final quantity="CapillaryTransportCoefficient", final unit="m2/s");
 annotation (preferredView="info", Documentation(info="<html>
 <p>
 This package contains type definitions.

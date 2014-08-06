@@ -69,7 +69,7 @@ equation
       color={191,0,0},
       smooth=Smooth.None));
   connect(conConPar_a.port_a, radTem.conPar_a)       annotation (Line(
-      points={{40,6.10623e-16},{32,6.10623e-16},{32,15},{-19.8333,15}},
+      points={{40,6.10623e-016},{32,6.10623e-016},{32,15},{-19.8333,15}},
       color={191,0,0},
       smooth=Smooth.None));
   connect(conConPar_b.port_a, radTem.conPar_b)       annotation (Line(

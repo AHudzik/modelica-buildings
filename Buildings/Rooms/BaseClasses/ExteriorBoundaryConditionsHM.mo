@@ -1,5 +1,5 @@
 within Buildings.Rooms.BaseClasses;
-model ExteriorBoundaryConditions
+model ExteriorBoundaryConditionsHM
   "Model for convection and radiation bounary condition of exterior constructions"
   parameter Integer nCon(min=1) "Number of exterior constructions"
   annotation (Dialog(group="Exterior constructions"));
@@ -12,9 +12,6 @@ model ExteriorBoundaryConditions
     ParameterConstruction "Records for construction"
     annotation (Placement(transformation(extent={{174,-214},{194,-194}})));
 
-  Modelica.Thermal.HeatTransfer.Interfaces.HeatPort_a opa_a[nCon]
-    "Heat port at surface a of opaque construction"
-    annotation (Placement(transformation(extent={{-310,190},{-290,210}})));
   parameter Buildings.HeatTransfer.Types.ExteriorConvection conMod=
   Buildings.HeatTransfer.Types.ExteriorConvection.TemperatureWind
     "Convective heat transfer model for opaque part of the constructions"
@@ -28,13 +25,6 @@ model ExteriorBoundaryConditions
   // assign them.
   // We reassign the tilt since a roof has been declared in the room model as the
   // ceiling (of the room)
-  HeatTransfer.Convection.Exterior conOpa[nCon](
-    A=AOpa,
-    final til=Modelica.Constants.pi*ones(nCon) .- conPar[:].til,
-    final azi=conPar[:].azi,
-    each conMod=conMod,
-    each hFixed=hFixed) "Convection model for opaque part of the wall"
-    annotation (Placement(transformation(extent={{-180,160},{-140,200}})));
 
   SkyRadiationExchange skyRadExc(
     final n=nCon,
@@ -83,20 +73,23 @@ protected
                                                nout=nCon) "Signal replicator"
     annotation (Placement(transformation(extent={{180,220},{160,240}})));
 
+public
+  HeatTransfer.Convection.ExteriorHM exteriorHM(
+    til=conPar[1].til,
+    azi=conPar[1].azi,
+    A=AOpa[1])
+    annotation (Placement(transformation(extent={{-120,160},{-160,200}})));
+  Utilities.Psychrometrics.X_pTphi x_pTphi
+    annotation (Placement(transformation(extent={{72,-2},{30,40}})));
+  HeatTransfer.Interfaces.HeatMassPort_a solid1
+    annotation (Placement(transformation(extent={{-152,-246},{-132,-226}}),
+        iconTransformation(extent={{-152,-246},{-132,-226}})));
+  HeatTransfer.Interfaces.HeatMassPort_b fluid1
+    annotation (Placement(transformation(extent={{-310,170},{-290,190}})));
+  HeatTransfer.Sources.PrescribedHumidity prescribedHumidity
+    annotation (Placement(transformation(extent={{0,0},{-40,40}})));
 equation
-  connect(conOpa.solid, opa_a) annotation (Line(
-      points={{-180,180},{-240,180},{-240,200},{-300,200}},
-      color={191,0,0},
-      smooth=Smooth.None));
-  connect(skyRadExc.port, opa_a) annotation (Line(
-      points={{-180,260},{-240,260},{-240,200},{-300,200}},
-      color={191,0,0},
-      smooth=Smooth.None));
 
-  connect(TAirConExt.port, conOpa.fluid) annotation (Line(
-      points={{-32,180},{-140,180}},
-      color={191,0,0},
-      smooth=Smooth.None));
   connect(repConExt.y, TAirConExt.T) annotation (Line(
       points={{79,180},{12,180}},
       color={0,0,127},
@@ -144,10 +137,6 @@ equation
       points={{19,110},{5.55112e-16,110}},
       color={0,0,127},
       smooth=Smooth.None));
-  connect(solHeaGaiConExt.port, opa_a) annotation (Line(
-      points={{-20,110},{-240,110},{-240,200},{-300,200}},
-      color={191,0,0},
-      smooth=Smooth.None));
   connect(HDirTil.H, HTotConExt.u1) annotation (Line(
       points={{199,130},{60,130},{60,116},{42,116}},
       color={0,0,127},
@@ -170,26 +159,78 @@ equation
       string="%second",
       index=1,
       extent={{6,3},{6,3}}));
-  connect(repConExt1.y, conOpa.v) annotation (Line(
-      points={{109,210},{-194,210},{-194,200},{-184,200}},
+  connect(weaBus.pAtm, x_pTphi.p_in) annotation (Line(
+      points={{244,42},{184,42},{184,31.6},{76.2,31.6}},
+      color={255,204,51},
+      thickness=0.5,
+      smooth=Smooth.None), Text(
+      string="%first",
+      index=-1,
+      extent={{-6,3},{-6,3}}));
+  connect(weaBus.TDryBul, x_pTphi.T) annotation (Line(
+      points={{244,42},{184,42},{184,19},{76.2,19}},
+      color={255,204,51},
+      thickness=0.5,
+      smooth=Smooth.None), Text(
+      string="%first",
+      index=-1,
+      extent={{-6,3},{-6,3}}));
+  connect(weaBus.relHum, x_pTphi.phi) annotation (Line(
+      points={{244,42},{184,42},{184,6.4},{76.2,6.4}},
+      color={255,204,51},
+      thickness=0.5,
+      smooth=Smooth.None), Text(
+      string="%first",
+      index=-1,
+      extent={{-6,3},{-6,3}}));
+  connect(exteriorHM.solid, solid1) annotation (Line(
+      points={{-120,181.2},{-98,181.2},{-98,-236},{-142,-236}},
+      color={0,0,0},
+      pattern=LinePattern.None,
+      smooth=Smooth.None));
+  connect(exteriorHM.fluid, fluid1) annotation (Line(
+      points={{-160,180},{-300,180}},
+      color={127,0,127},
+      smooth=Smooth.None));
+  connect(TAirConExt[1].port, solid1.heatPort) annotation (Line(
+      points={{-32,180},{-88,180},{-88,-236},{-142,-236}},
+      color={191,0,0},
+      smooth=Smooth.None));
+  connect(repConExt1.y[1], exteriorHM.v) annotation (Line(
+      points={{109,210},{-80,210},{-80,200},{-116,200}},
       color={0,0,127},
       smooth=Smooth.None));
-  connect(repConExt2.y, conOpa.dir) annotation (Line(
-      points={{159,230},{-200,230},{-200,190},{-184,190}},
+  connect(repConExt2.y[1], exteriorHM.dir) annotation (Line(
+      points={{159,230},{-92,230},{-92,190},{-116,190}},
       color={0,0,127},
+      smooth=Smooth.None));
+  connect(x_pTphi.X[1], prescribedHumidity.X) annotation (Line(
+      points={{27.9,19},{15.95,19},{15.95,20},{4,20}},
+      color={0,0,127},
+      smooth=Smooth.None));
+  connect(prescribedHumidity.massPort, solid1.massPort) annotation (Line(
+      points={{-40,20.4},{-142,20.4},{-142,-236}},
+      color={0,0,0},
+      smooth=Smooth.None));
+  connect(solHeaGaiConExt[1].port, fluid1.heatPort) annotation (Line(
+      points={{-20,110},{-300,110},{-300,180}},
+      color={191,0,0},
+      smooth=Smooth.None));
+  connect(skyRadExc.port[1], fluid1.heatPort) annotation (Line(
+      points={{-180,260},{-238,260},{-238,180},{-300,180}},
+      color={191,0,0},
       smooth=Smooth.None));
   annotation (Diagram(coordinateSystem(preserveAspectRatio=false,extent={{-300,
             -300},{300,300}},
         initialScale=0.1), graphics),
-                          Icon(coordinateSystem(preserveAspectRatio=true,
+                          Icon(coordinateSystem(preserveAspectRatio=false,
           extent={{-300,-300},{300,300}},
         initialScale=0.1), graphics={
         Rectangle(
           extent={{-160,280},{280,-250}},
           fillColor={230,243,255},
           fillPattern=FillPattern.Solid,
-          pattern=LinePattern.None),
-                               Ellipse(
+          lineColor={0,0,0}),  Ellipse(
           extent={{164,262},{270,162}},
           lineColor={255,255,0},
           fillColor={255,213,170},
@@ -207,12 +248,22 @@ equation
         Text(
           extent={{-168,346},{212,280}},
           lineColor={0,0,255},
-          textString="%name")}),
+          textString="%name"),
+        Line(
+          points={{-136,268},{-136,-234}},
+          color={0,0,255},
+          pattern=LinePattern.Dot,
+          smooth=Smooth.None),
+        Line(
+          points={{-148,268},{-148,-230}},
+          color={0,0,127},
+          pattern=LinePattern.Dot,
+          smooth=Smooth.None)}),
         Documentation(info="<html>
 This model computes the boundary conditions for the outside-facing surface of
 opaque constructions.
 <p>
-The model computes the infrared, solar, and convective heat exchange
+The model computes the infrared, solar, and convective heat and mass exchange
 between these surfaces and the exterior temperature and the sky temperature.
 Input into this model are weather data that may be obtained from
 <a href=\"modelica://Buildings.BoundaryConditions.WeatherData\">
@@ -236,28 +287,12 @@ Buildings.Rooms.BaseClasses.ExteriorBoundaryConditionsWithWindow</a>.
 </html>",
         revisions="<html>
 <ul>
+
 <li>
-August 9, 2011 by Michael Wetter:<br/>
-Changed assignment of tilt in instance <code>conOpa</code>.
-This fixes the bug in <a href=\"https://github.com/lbl-srg/modelica-buildings/issues/35\">issue 35</a>
-that led to the wrong solar radiation gain for roofs and floors. 
-(Since the tilt has been changed in the model 
-<a href=\"modelica://Buildings.Rooms.MixedAir\">
-Buildings.Rooms.MixedAir</a> at the place where it makes an instance of this model, 
-the change in the tilt parameter of the convective heat transfer model was required.)
-</li>
-<li>
-March 28, 2011, by Michael Wetter:<br/>
-Propaged parameter <code>hFixed</code> to top-level of the model.
-</li>
-<li>
-March 23, 2011, by Michael Wetter:<br/>
-Removed default value for convection model.
-</li>
-<li>
-November 23, 2010, by Michael Wetter:<br/>
+July 28, 2011, by Antoine Hudzik:<br/>
+
 First implementation.
 </li>
 </ul>
 </html>"));
-end ExteriorBoundaryConditions;
+end ExteriorBoundaryConditionsHM;

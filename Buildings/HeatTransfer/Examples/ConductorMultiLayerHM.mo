@@ -2,10 +2,18 @@ within Buildings.HeatTransfer.Examples;
 model ConductorMultiLayerHM
   extends Modelica.Icons.Example;
   Conduction.MultiLayerHM multiLayerHM(redeclare
-      Buildings.HeatTransfer.Data.OpaqueConstructions.Concrete200HM layers, A=1)
+      Buildings.HeatTransfer.Data.OpaqueConstructions.Concrete200HM layers, A=1,
+    switch_w=2,
+    switch_lamb=2,
+    switch_dw=2,
+    activatesuction=false)
     annotation (Placement(transformation(extent={{-20,-8},{16,28}})));
   Conduction.SingleLayerHM lay(redeclare
-      Buildings.HeatTransfer.Data.Solids.ConcreteHM material(x=0.2, nSta=3))
+      Buildings.HeatTransfer.Data.Solids.ConcreteHM material(x=0.2, nSta=3),
+    switch_w=2,
+    switch_lamb=2,
+    switch_dw=2,
+    activatesuction=false)
     annotation (Placement(transformation(extent={{-16,-44},{14,-14}})));
   Sources.PrescribedTemperature prescribedTemperature
     annotation (Placement(transformation(extent={{-76,6},{-64,18}})));

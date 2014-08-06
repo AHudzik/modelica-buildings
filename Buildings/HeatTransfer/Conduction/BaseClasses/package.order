@@ -4,10 +4,4 @@ PartialConstructionHM
 der_temperature_u
 temperature_u
 Examples
-courbe_sorption
-test
-LiquidConductionCoefficient
-RelativeHumidity
-MoistureStorageCapacity
-VapourDiffusionCoefficient
-CapillaryTransportCoefficient
+BuildingPhysicsLibrary

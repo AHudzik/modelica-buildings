@@ -108,11 +108,7 @@ p<sub>s</sub> is the water vapour pressure on the building component surface [Pa
 </html>", revisions="<html>
 <ul>
 <li>
-April 2, 2011 by Michael Wetter:<br/>
-Added <code>homotopy</code> operator.
-</li>
-<li>
-March 10 2010, by Michael Wetter:<br/>
+March 11 2014 Antoine Hudzik<br/>
 First implementation.
 </li>
 </ul>

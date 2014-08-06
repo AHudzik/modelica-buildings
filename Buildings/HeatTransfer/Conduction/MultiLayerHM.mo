@@ -172,7 +172,14 @@ To obtain the surface temperature of the construction, use <code>port_a.T</code>
 and not the variable <code>T[1]</code> because there is a thermal resistance between the surface
 and the temperature state.
 </p>
+</html>", revisions="<html>
+<ul>
+<li>
+Jun 8 2014, by Antoine Hudzik:<br/>
 
+First implementation.
+</li>
+</ul>
 
-</html>"));
+          </html>"));
 end MultiLayerHM;

@@ -1,0 +1,54 @@
+within Buildings.HeatTransfer.Conduction.BaseClasses;
+model test
+
+
+  SingleLayerHM lay(
+    activatesuction=false,
+    phi_ini=0.2,
+    switch_w=1,
+    switch_lamb=1,
+    switch_dw=1,
+    redeclare Buildings.HeatTransfer.Data.Solids.ConcreteHM material(x=0.2,
+        nSta=5))
+    annotation (Placement(transformation(extent={{-18,-18},{16,18}})));
+  Interfaces.HeatMassPort_b heatMassPort_b1
+    annotation (Placement(transformation(extent={{36,-4},{44,4}})));
+  Interfaces.HeatMassPort_a heatMassPort_a1
+    annotation (Placement(transformation(extent={{-44,-4},{-36,4}})));
+  Sources.FixedHumidity fixedHumidity(X=0.003)
+    annotation (Placement(transformation(extent={{-80,-40},{-60,-20}})));
+  Sources.FixedTemperature fixedTemperature(T=283.15)
+    annotation (Placement(transformation(extent={{-80,20},{-60,40}})));
+  Sources.FixedTemperature fixedTemperature1(T=297.15)
+    annotation (Placement(transformation(extent={{80,20},{60,40}})));
+  Sources.FixedHumidity fixedHumidity1(X=0.009)
+    annotation (Placement(transformation(extent={{80,-40},{60,-20}})));
+equation
+  connect(lay.heatMassPort_b, heatMassPort_b1) annotation (Line(
+      points={{16,0},{40,0}},
+      color={127,0,127},
+      smooth=Smooth.None));
+  connect(lay.heatMassPort_a, heatMassPort_a1) annotation (Line(
+      points={{-18,0},{-40,0}},
+      color={0,0,0},
+      pattern=LinePattern.None,
+      smooth=Smooth.None));
+  connect(fixedTemperature.port, heatMassPort_a1.heatPort) annotation (Line(
+      points={{-60,30},{-50,30},{-50,0},{-40,0}},
+      color={191,0,0},
+      smooth=Smooth.None));
+  connect(fixedHumidity.massPort, heatMassPort_a1.massPort) annotation (Line(
+      points={{-60,-30},{-50,-30},{-50,0},{-40,0}},
+      color={0,0,0},
+      smooth=Smooth.None));
+  connect(fixedTemperature1.port, heatMassPort_b1.heatPort) annotation (Line(
+      points={{60,30},{52,30},{52,0},{40,0}},
+      color={191,0,0},
+      smooth=Smooth.None));
+  connect(fixedHumidity1.massPort, heatMassPort_b1.massPort) annotation (Line(
+      points={{60,-30},{52,-30},{52,0},{40,0}},
+      color={0,0,0},
+      smooth=Smooth.None));
+  annotation (Diagram(coordinateSystem(preserveAspectRatio=false, extent={{-100,
+            -100},{100,100}}), graphics));
+end test;
